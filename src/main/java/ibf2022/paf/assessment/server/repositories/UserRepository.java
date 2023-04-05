@@ -37,6 +37,7 @@ public class UserRepository {
         String userId = user.getUserId();
         String username = user.getUsername();
         String name = user.getName();
+        System.out.println("Inserting now " + userId + " " + username + " " + name);
         try {
             jdbcTemplate.update(INSERT_USER_SQL, userId, username, name);
         } catch (Exception e) {

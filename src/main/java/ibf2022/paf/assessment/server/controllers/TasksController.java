@@ -3,13 +3,15 @@ package ibf2022.paf.assessment.server.controllers;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import ibf2022.paf.assessment.server.models.Task;
 import ibf2022.paf.assessment.server.repositories.TaskRepository;
@@ -17,7 +19,7 @@ import ibf2022.paf.assessment.server.services.TodoService;
 
 // TODO: Task 4, Task 8
 
-@RestController
+@Controller
 @RequestMapping("/task")
 public class TasksController {
 
@@ -28,21 +30,46 @@ public class TasksController {
     private TodoService todoService;
 
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<String> addTask(@RequestParam MultiValueMap<String, String> form) {
+    public ResponseEntity<ModelAndView> addTask(@RequestParam MultiValueMap<String, String> form) {
+
+        ModelAndView modelAndView = new ModelAndView();
 
         Task incomingTask = new Task();
 
         incomingTask = addToTaskList(form);
 
-
         incomingTask.printTaskList();
 
         //save to database
         System.out.println("Saving task to database");
-        todoService.upsertTask(incomingTask);
-        return ResponseEntity.ok("Task added");
+        Boolean upsert = false;
+        try {
+            upsert = todoService.upsertTask(incomingTask);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (upsert){
+            modelAndView.addObject("taskCount", incomingTask.getTaskList().size());
+            modelAndView.addObject("username", incomingTask.getTaskList().get(0).getUsername());
+            modelAndView.setViewName("result");
+            return new ResponseEntity<>(modelAndView, HttpStatusCode.valueOf(200));
+
+        } else {
+            modelAndView.setViewName("error");
+            return new ResponseEntity<>(modelAndView, HttpStatusCode.valueOf(500));
+        }
         
 
+    }
+
+    public ResponseEntity<String> httpStatus(Boolean success){
+        if (success){
+            return ResponseEntity.ok("Task added successfully");
+        } else {
+            return ResponseEntity.badRequest().body("Task not added");
+        }
     }
 
     public Task addToTaskList(MultiValueMap<String, String> form){

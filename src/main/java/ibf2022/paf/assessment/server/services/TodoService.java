@@ -55,12 +55,14 @@ public class TodoService {
         //create user
         //user will input the username. name will be saved as username but with first letter capitalised
         System.out.println("Username does not exist, creating new user " + taskList.getUsername());
-        String username = taskList.getUsername();
+        String username = taskList.getTaskList().get(0).getUsername();
         
         String firstLetter = username.substring(0,1).toUpperCase();
         String newName = firstLetter + username.substring(1);
         user.setName(newName);
-        user.setUserId(username);
+        user.setUsername(username);
+
+        System.out.println("Printing name and username " + user.getName() + " " + user.getUsername());
         
         //insert the user
         String newUserUUID = userRepository.insertUser(user); //returns uuid
@@ -72,6 +74,7 @@ public class TodoService {
         for(Task task: taskList.getTaskList()){
             task.setUserId(newUserUUID);
         }
+
 
         //insert tasks one by one
         isAllTasksInserted = insertTasksRepo(taskList, isAllTasksInserted);

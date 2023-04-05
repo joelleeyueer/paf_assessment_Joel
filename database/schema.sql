@@ -11,10 +11,13 @@ CREATE TABLE IF NOT EXISTS user (
 
 CREATE TABLE IF NOT EXISTS task (
   task_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id VARCHAR(8) NOT NULL,
   description VARCHAR(255) NOT NULL,
   priority INT NOT NULL CHECK (priority BETWEEN 1 AND 3),
-  due_date DATE NOT NULL
+  due_date DATE NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES user(user_id)
 );
+
 
 
 

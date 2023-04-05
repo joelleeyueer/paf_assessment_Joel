@@ -10,3 +10,17 @@ SELECT * FROM user;
 SELECT * FROM user WHERE username = 'joel';
 
 INSERT INTO user(user_id, username, name) VALUES ('12a45b78', 'joel', 'Joel');
+
+DELETE FROM task WHERE task_id > 0;
+ALTER TABLE task AUTO_INCREMENT = 1;
+
+
+-- testing insert
+INSERT INTO task (description, priority, due_date)
+VALUES 
+    ('Finish project', 2, '2023-04-30'),
+    ('Buy groceries', 3, '2023-04-08'),
+    ('Pay bills', 1, '2023-04-15');
+    
+SELECT * FROM task;
+

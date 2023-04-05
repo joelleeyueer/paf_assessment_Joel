@@ -1,7 +1,14 @@
 package ibf2022.paf.assessment.server.repositories;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import ibf2022.paf.assessment.server.models.Task;
@@ -14,9 +21,30 @@ public class TaskRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    // private static final String INSERT_TASK_SQL = "INSERT INTO task(task_id, task_name, task_description, task_status, user_id) VALUES (?, ?, ?, ?, ?)";
+    private static final String INSERT_TASK_SQL = "INSERT INTO task (description, priority, due_date) VALUES (?, ?, ?)";
 
-    public void addTaskRepo(Task task){
-        task.addTask(task);
+    public Boolean insertSingleTask(Task task) {
+        KeyHolder generatedKeyHolder = new GeneratedKeyHolder(); 
+
+        PreparedStatementCreator psc = new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement(INSERT_TASK_SQL, new String[] {"task_id"});
+                ps.setString(1, task.getDescription());
+                ps.setInt(2, task.getPriority());
+                ps.setObject(3, task.getDueDate());
+                return ps;
+            }
+        };
+
+        jdbcTemplate.update(psc, generatedKeyHolder);
+        try {
+            Integer taskId = generatedKeyHolder.getKey().intValue();
+            System.out.println("Task has been inserted. Task: "+ task + "\ntaskId added is " + taskId);
+
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 }

@@ -6,6 +6,7 @@ INSERT INTO user(user_id, username, name) VALUES
 ('66223e28', 'betty', 'Betty');
 
 SELECT * FROM user;
+SELECT * FROM task;
 
 SELECT * FROM user WHERE username = 'joel';
 
@@ -14,7 +15,7 @@ INSERT INTO user(user_id, username, name) VALUES ('12a45b78', 'joel', 'Joel');
 DELETE FROM task WHERE task_id > 0;
 ALTER TABLE task AUTO_INCREMENT = 1;
 
-SELECT * FROM task;
+
 
 
 -- testing insert

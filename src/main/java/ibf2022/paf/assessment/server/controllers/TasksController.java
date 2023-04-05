@@ -30,7 +30,7 @@ public class TasksController {
     private TodoService todoService;
 
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<ModelAndView> addTask(@RequestParam MultiValueMap<String, String> form) {
+    public ModelAndView addTask(@RequestParam MultiValueMap<String, String> form) {
 
         ModelAndView modelAndView = new ModelAndView();
 
@@ -54,11 +54,13 @@ public class TasksController {
             modelAndView.addObject("taskCount", incomingTask.getTaskList().size());
             modelAndView.addObject("username", incomingTask.getTaskList().get(0).getUsername());
             modelAndView.setViewName("result");
-            return new ResponseEntity<>(modelAndView, HttpStatusCode.valueOf(200));
+            modelAndView.setStatus(HttpStatusCode.valueOf(200));
+            return modelAndView;
 
         } else {
             modelAndView.setViewName("error");
-            return new ResponseEntity<>(modelAndView, HttpStatusCode.valueOf(500));
+            modelAndView.setStatus(HttpStatusCode.valueOf(500));
+            return modelAndView;
         }
         
 

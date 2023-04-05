@@ -1,5 +1,6 @@
 package ibf2022.paf.assessment.server.models;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,20 +10,31 @@ import java.util.List;
 public class Task {
 
 
-    List<Task> tasks = new ArrayList<Task>();
+    private List<Task> taskList = new ArrayList<Task>();
 
+    
     private String description;
     private int priority;
-    private LocalDateTime dueDate;
+    private LocalDate dueDate;
     private String username;
 
     public Task() {
     }
 
     public void addTask(Task task) {
-        tasks.add(task);
+        taskList.add(task);
         System.out.println("Task added " + task);
     }
+
+    public List<Task> getTaskList() {
+        return taskList;
+    }
+
+    public void printTaskList(){
+        System.out.println(taskList);
+    }
+
+
     public String getDescription() {
         return description;
     }
@@ -35,10 +47,10 @@ public class Task {
     public void setPriority(int priority) {
         this.priority = priority;
     }
-    public LocalDateTime getDueDate() {
+    public LocalDate getDueDate() {
         return dueDate;
     }
-    public void setDueDate(LocalDateTime dueDate) {
+    public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
     public String getUsername() {
@@ -47,6 +59,16 @@ public class Task {
     public void setUsername(String username) {
         this.username = username;
     }
+
+    @Override
+    public String toString() {
+        return "Task [description=" + description + ", priority=" + priority + ", dueDate=" + dueDate + ", username="
+                + username + "]";
+    }
+
+    
+
+    
 
     
 }

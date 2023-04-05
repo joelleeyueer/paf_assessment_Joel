@@ -24,56 +24,63 @@ public class TodoService {
     private UserRepository userRepository;
 
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
-    public Boolean upsertTask(User user, Task taskList){
+    public Boolean upsertTask(Task taskList){
+        User user = new User();
         //insert list of tasks for a user
         //if user does not exist, create the user first, then insert the task
         Boolean isAllTasksInserted = false;
 
-        //check if user exists
-        Optional<User> opt = userRepository.findByUsername(taskList.getUsername());
+        //check if user exists from the User table
+        Optional<User> opt = userRepository.findByUsername(taskList.getTaskList().get(0).getUsername());
         if(opt.isPresent()){
             //user exists
             //insert tasks one by one
+            System.out.println("username exists " + taskList.getTaskList().get(0).getUsername());
+            //add userId to each task
+            String userId = opt.get().getUserId();
+            for(Task task: taskList.getTaskList()){
+                task.setUserId(userId);
+            }
             isAllTasksInserted = insertTasksRepo(taskList, isAllTasksInserted);
 
             if (isAllTasksInserted){
+                System.out.println("All tasks inserted");
                 return true;
             } else {
                 throw new RuntimeException("Not all tasks inserted, please try again.");
             }
         }
 
-        //user does not exist
+        //user does not exist, need to pass in taskList.getusername into user
         //create user
         //user will input the username. name will be saved as username but with first letter capitalised
-        String username = user.getUsername();
-        String name = null;
-        if (user.getName() == null){
-            String firstLetter = username.substring(0,1).toUpperCase();
-            String newName = firstLetter + username.substring(1);
-            user.setName(newName);
-            name = newName;
-        } else {
-            name = user.getName();
-        }
+        System.out.println("Username does not exist, creating new user " + taskList.getUsername());
+        String username = taskList.getUsername();
         
-        User incomingUser = new User();
-        userRepository.insertUser(incomingUser);
+        String firstLetter = username.substring(0,1).toUpperCase();
+        String newName = firstLetter + username.substring(1);
+        user.setName(newName);
+        user.setUserId(username);
+        
+        //insert the user
+        String newUserUUID = userRepository.insertUser(user); //returns uuid
+        if (newUserUUID.equalsIgnoreCase("Error")){
+            throw new RuntimeException("Error creating new user, please try again.");
+        }
+
+        //insert uuid to each task
+        for(Task task: taskList.getTaskList()){
+            task.setUserId(newUserUUID);
+        }
 
         //insert tasks one by one
         isAllTasksInserted = insertTasksRepo(taskList, isAllTasksInserted);
         if (isAllTasksInserted){
+            System.out.println("All tasks inserted");
             return true;
         } else {
             throw new RuntimeException("Not all tasks inserted, please try again.");
         }
-
-        
-        
-
-
-
-    
     }
 
     private Boolean insertTasksRepo(Task taskList, Boolean isAllTasksInserted) {

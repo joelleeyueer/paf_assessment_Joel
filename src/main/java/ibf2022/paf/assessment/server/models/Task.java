@@ -17,6 +17,9 @@ public class Task {
     private int priority;
     private LocalDate dueDate;
     private String username;
+    private String userId;
+
+    
 
     public Task() {
     }
@@ -58,6 +61,14 @@ public class Task {
     }
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     @Override

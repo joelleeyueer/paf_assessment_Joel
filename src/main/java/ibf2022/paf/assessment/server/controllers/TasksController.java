@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ibf2022.paf.assessment.server.models.Task;
 import ibf2022.paf.assessment.server.repositories.TaskRepository;
+import ibf2022.paf.assessment.server.services.TodoService;
 
 // TODO: Task 4, Task 8
 
@@ -23,6 +24,9 @@ public class TasksController {
     @Autowired
     private TaskRepository taskRepository;
 
+    @Autowired
+    private TodoService todoService;
+
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> addTask(@RequestParam MultiValueMap<String, String> form) {
 
@@ -32,6 +36,10 @@ public class TasksController {
 
 
         incomingTask.printTaskList();
+
+        //save to database
+        System.out.println("Saving task to database");
+        todoService.upsertTask(incomingTask);
         return ResponseEntity.ok("Task added");
         
 

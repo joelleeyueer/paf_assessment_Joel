@@ -21,7 +21,7 @@ public class TaskRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private static final String INSERT_TASK_SQL = "INSERT INTO task (description, priority, due_date) VALUES (?, ?, ?)";
+    private static final String INSERT_TASK_SQL = "INSERT INTO task (user_id, description, priority, due_date) VALUES (?, ?, ?, ?)";
 
     public Boolean insertSingleTask(Task task) {
         KeyHolder generatedKeyHolder = new GeneratedKeyHolder(); 
@@ -30,9 +30,10 @@ public class TaskRepository {
             @Override
             public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(INSERT_TASK_SQL, new String[] {"task_id"});
-                ps.setString(1, task.getDescription());
-                ps.setInt(2, task.getPriority());
-                ps.setObject(3, task.getDueDate());
+                ps.setString(1, task.getUserId());
+                ps.setString(2, task.getDescription());
+                ps.setInt(3, task.getPriority());
+                ps.setObject(4, task.getDueDate());
                 return ps;
             }
         };
